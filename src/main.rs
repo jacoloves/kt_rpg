@@ -2,8 +2,11 @@ use std::{
     fs::File,
     io::{self, Read, Write},
     path::Path,
+    thread,
+    time::Duration,
 };
 
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -60,6 +63,47 @@ fn load_or_create_character() -> io::Result<Character> {
     }
 }
 
+fn battle(character: &mut Character, monster: &Monster) {
+    let mut rng = rand::thread_rng();
+    let mut monster_hp = monster.hp;
+
+    println!("{}が現れた！", monster.name);
+
+    while character.hp > 0 && monster_hp > 0 {
+        let attack = rng.gen_range(character.min_attack..=character.max_attack);
+        println!("{}の攻撃！ {}のダメージ", character.name, attack);
+        monster_hp -= attack;
+
+        if monster_hp <= 0 {
+            println!("{}を倒した！", monster.name);
+            character.exp += monster.exp;
+            println!("経験値{}を獲得した！", monster.exp);
+            break;
+        }
+
+        let attack = rng.gen_range(monster.min_attack..=monster.max_attack);
+        println!("{}の攻撃！ {}のダメージ", monster.name, attack);
+        character.hp -= attack;
+
+        if character.hp <= 0 {
+            println!("{}は倒れた...", character.name);
+            break;
+        }
+
+        thread::sleep(Duration::from_secs(3));
+    }
+}
+
 fn main() {
-    println!("Hello, world!");
+    let mut character = load_or_create_character().expect("キャラクターの読み込みに失敗しました。");
+
+    let monster = Monster {
+        name: String::from("スライム"),
+        hp: 30,
+        min_attack: 1,
+        max_attack: 3,
+        exp: 10,
+    };
+
+    battle(&mut character, &monster);
 }
