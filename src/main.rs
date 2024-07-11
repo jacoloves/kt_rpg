@@ -94,6 +94,14 @@ fn battle(character: &mut Character, monster: &Monster) {
     }
 }
 
+fn save_character(character: &Character) -> io::Result<()> {
+    let path = Path::new("savefile.json");
+    let data = serde_json::to_string_pretty(character)?;
+    let mut file = File::create(path)?;
+    file.write_all(data.as_bytes())?;
+    Ok(())
+}
+
 fn main() {
     let mut character = load_or_create_character().expect("キャラクターの読み込みに失敗しました。");
 
