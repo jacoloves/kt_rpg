@@ -2,7 +2,7 @@ use std::{
     fs::File,
     io::{self, Read, Write},
     path::Path,
-    thread,
+    thread::{self, current},
     time::Duration,
 };
 
@@ -104,6 +104,33 @@ fn save_character(character: &Character) -> io::Result<()> {
     let mut file = File::create(path)?;
     file.write_all(data.as_bytes())?;
     Ok(())
+}
+
+fn required_exp_to_level_up(current_lv: u32) -> u32 {
+    100 * current_lv * current_lv
+}
+
+fn check_level_up(character: &mut Character) {
+    while character.exp >= required_exp_to_level_up(character.lv) {
+        character.exp -= required_exp_to_level_up(character.lv);
+        character.lv += 1;
+        println!("レベルアップ！ {}レベルになりました！", character.lv);
+
+        let mut rng = rand::thread_rng();
+        let hp_increase = rng.gen_range(5..=10);
+        character.hp += hp_increase;
+        println!("HPが{}増加しました！", hp_increase);
+
+        let attack_increase = rng.gen_range(1..=3);
+        character.min_attack += attack_increase;
+        character.max_attack += attack_increase;
+        println!("攻撃力が{}増加しました！", attack_increase);
+
+        let recovery_increase = rng.gen_range(1..=3);
+        character.min_recovery += recovery_increase;
+        character.max_recovery += recovery_increase;
+        println!("回復力が{}増加しました！", recovery_increase);
+    }
 }
 
 fn main() {
