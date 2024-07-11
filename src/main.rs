@@ -92,6 +92,10 @@ fn battle(character: &mut Character, monster: &Monster) {
 
         thread::sleep(Duration::from_secs(3));
     }
+
+    if character.hp > 0 {
+        save_character(character).expect("セーブ中にエラーが発生しました。");
+    }
 }
 
 fn save_character(character: &Character) -> io::Result<()> {
