@@ -23,6 +23,7 @@ struct Character {
     name: String,
     lv: u32,
     hp: i32,
+    max_hp: i32,
     stats: Stats,
     exp: u32,
 }
@@ -55,6 +56,7 @@ fn load_or_create_character() -> io::Result<Character> {
             name,
             lv: 1,
             hp: 50,
+            max_hp: 50,
             stats: Stats {
                 min_attack: 2,
                 max_attack: 5,
@@ -102,6 +104,7 @@ fn battle(character: &mut Character, monster: &Monster) {
     }
 
     if character.hp > 0 {
+        character.hp = character.max_hp;
         save_character(character).expect("セーブ中にエラーが発生しました。");
     }
 }
@@ -126,7 +129,8 @@ fn check_level_up(character: &mut Character) {
 
         let mut rng = rand::thread_rng();
         let hp_increase = rng.gen_range(5..=10);
-        character.hp += hp_increase;
+        character.max_hp += hp_increase;
+        character.hp = character.max_hp;
         println!("HPが{}増加しました！", hp_increase);
 
         let attack_increase = rng.gen_range(1..=3);
