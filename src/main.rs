@@ -8,16 +8,22 @@ use std::{
 
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use serde_yaml;
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Stats {
+    min_attack: i32,
+    max_attack: i32,
+    min_recovery: i32,
+    max_recovery: i32,
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Character {
     name: String,
     lv: u32,
     hp: i32,
-    min_attack: i32,
-    max_attack: i32,
-    min_recovery: i32,
-    max_recovery: i32,
+    stats: Stats,
     exp: u32,
 }
 
@@ -31,13 +37,13 @@ struct Monster {
 }
 
 fn load_or_create_character() -> io::Result<Character> {
-    let path = Path::new("savefile.json");
+    let path = Path::new("savefile.yaml");
 
     if path.exists() {
         let mut file = File::open(path)?;
         let mut data = String::new();
         file.read_to_string(&mut data)?;
-        let character: Character = serde_json::from_str(&data)?;
+        let character: Character = serde_yaml::from_str(&data).unwrap();
         Ok(character)
     } else {
         println!("新しいキャラクターを作成します。名前を入力してください:");
@@ -49,14 +55,16 @@ fn load_or_create_character() -> io::Result<Character> {
             name,
             lv: 1,
             hp: 50,
-            min_attack: 2,
-            max_attack: 5,
-            min_recovery: 1,
-            max_recovery: 3,
+            stats: Stats {
+                min_attack: 2,
+                max_attack: 5,
+                min_recovery: 1,
+                max_recovery: 3,
+            },
             exp: 0,
         };
 
-        let data = serde_json::to_string_pretty(&character)?;
+        let data = serde_yaml::to_string(&character).unwrap();
         let mut file = File::create(path)?;
         file.write_all(data.as_bytes())?;
         Ok(character)
@@ -70,7 +78,7 @@ fn battle(character: &mut Character, monster: &Monster) {
     println!("{}が現れた！", monster.name);
 
     while character.hp > 0 && monster_hp > 0 {
-        let attack = rng.gen_range(character.min_attack..=character.max_attack);
+        let attack = rng.gen_range(character.stats.min_attack..=character.stats.max_attack);
         println!("{}の攻撃！ {}のダメージ", character.name, attack);
         monster_hp -= attack;
 
@@ -99,7 +107,7 @@ fn battle(character: &mut Character, monster: &Monster) {
 }
 
 fn save_character(character: &Character) -> io::Result<()> {
-    let path = Path::new("savefile.json");
+    let path = Path::new("savefile.yaml");
     let data = serde_json::to_string_pretty(character)?;
     let mut file = File::create(path)?;
     file.write_all(data.as_bytes())?;
@@ -122,13 +130,14 @@ fn check_level_up(character: &mut Character) {
         println!("HPが{}増加しました！", hp_increase);
 
         let attack_increase = rng.gen_range(1..=3);
-        character.min_attack += attack_increase;
-        character.max_attack += attack_increase;
+        character.stats.min_attack += attack_increase;
+        character.stats.max_attack += attack_increase;
         println!("攻撃力が{}増加しました！", attack_increase);
 
         let recovery_increase = rng.gen_range(1..=3);
-        character.min_recovery += recovery_increase;
-        character.max_recovery += recovery_increase;
+
+        character.stats.min_recovery += recovery_increase;
+        character.stats.max_recovery += recovery_increase;
         println!("回復力が{}増加しました！", recovery_increase);
     }
 }
