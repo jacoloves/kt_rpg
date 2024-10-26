@@ -6,9 +6,9 @@ use std::{
     time::Duration,
 };
 
+use colored::Colorize;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use serde_yaml;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Stats {
@@ -32,6 +32,7 @@ struct Character {
 struct Monster {
     name: String,
     hp: i32,
+    max_hp: i32,
     min_attack: i32,
     max_attack: i32,
     exp: u32,
@@ -80,14 +81,26 @@ fn battle(character: &mut Character, monster: &Monster) {
     println!("{}が現れた！", monster.name);
 
     while character.hp > 0 && monster_hp > 0 {
+        println!(
+            "{} HP: {}/{} | {} HP: {}/{}",
+            character.name.green(),
+            character.hp.to_string().green(),
+            character.max_hp.to_string().green(),
+            monster.name.red(),
+            monster_hp.to_string().red(),
+            monster.max_hp.to_string().red()
+        );
+
         let attack = rng.gen_range(character.stats.min_attack..=character.stats.max_attack);
         println!("{}の攻撃！ {}のダメージ", character.name, attack);
         monster_hp -= attack;
 
         if monster_hp <= 0 {
-            println!("{}を倒した！", monster.name);
+            let victory_message = format!("{}を倒した！", monster.name);
+            println!("{}", victory_message.yellow());
+            let get_exp_message = format!("{}の経験値を獲得した！", monster.exp);
             character.exp += monster.exp;
-            println!("経験値{}を獲得した！", monster.exp);
+            println!("{}", get_exp_message.blue());
             break;
         }
 
@@ -96,7 +109,8 @@ fn battle(character: &mut Character, monster: &Monster) {
         character.hp -= attack;
 
         if character.hp <= 0 {
-            println!("{}は倒れた...", character.name);
+            let lose_message = format!("{}を倒れた...", character.name);
+            println!("{}", lose_message.red());
             break;
         }
 
@@ -152,6 +166,7 @@ fn main() {
     let monster = Monster {
         name: String::from("スライム"),
         hp: 30,
+        max_hp: 30,
         min_attack: 1,
         max_attack: 3,
         exp: 10,
