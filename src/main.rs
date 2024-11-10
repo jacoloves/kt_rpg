@@ -2,7 +2,7 @@ use std::{
     fs::File,
     io::{self, Read, Write},
     path::Path,
-    thread::{self, current},
+    thread,
     time::Duration,
 };
 
@@ -125,16 +125,18 @@ fn battle(character: &mut Character, monster: &Monster) {
 
 fn save_character(character: &Character) -> io::Result<()> {
     let path = Path::new("savefile.yaml");
-    let data = serde_json::to_string_pretty(character)?;
+    let data = serde_yaml::to_string(character).unwrap();
     let mut file = File::create(path)?;
     file.write_all(data.as_bytes())?;
     Ok(())
 }
 
+#[allow(dead_code)]
 fn required_exp_to_level_up(current_lv: u32) -> u32 {
     100 * current_lv * current_lv
 }
 
+#[allow(dead_code)]
 fn check_level_up(character: &mut Character) {
     while character.exp >= required_exp_to_level_up(character.lv) {
         character.exp -= required_exp_to_level_up(character.lv);

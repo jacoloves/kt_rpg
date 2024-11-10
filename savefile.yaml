@@ -1,0 +1,10 @@
+name: test
+lv: 1
+hp: 50
+max_hp: 50
+stats:
+  min_attack: 2
+  max_attack: 5
+  min_recovery: 1
+  max_recovery: 3
+exp: 60
