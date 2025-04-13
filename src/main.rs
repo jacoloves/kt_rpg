@@ -93,11 +93,17 @@ fn battle(character: &mut Character, monster: &Monster) -> bool {
 
         thread::sleep(Duration::from_secs(1));
 
-        let attack = rng.gen_range(character.stats.min_attack..=character.stats.max_attack);
-        println!("{}の攻撃！ {}のダメージ", character.name, attack);
-        monster_hp = monster_hp.saturating_sub(attack);
-
-        println!("monster hp: {}", monster_hp);
+        // 🎲 decide attack or recovery for random
+        if rng.gen_bool(0.5) {
+            let attack = rng.gen_range(character.stats.min_attack..=character.stats.max_attack);
+            println!("⚔️ {}の攻撃！ {}のダメージ", character.name, attack);
+            monster_hp = monster_hp.saturating_sub(attack);
+        } else {
+            let recovery =
+                rng.gen_range(character.stats.min_recovery..=character.stats.max_recovery);
+            character.hp = (character.hp + recovery).min(character.max_hp);
+            println!("❤️ {}は回復した！ {}のHPを回復", character.name, recovery);
+        }
 
         thread::sleep(Duration::from_secs(3));
 
@@ -115,7 +121,7 @@ fn battle(character: &mut Character, monster: &Monster) -> bool {
         }
 
         let attack = rng.gen_range(monster.min_attack..=monster.max_attack);
-        println!("{}の攻撃！ {}のダメージ", monster.name, attack);
+        println!("👊{}の攻撃！ {}のダメージ", monster.name, attack);
         character.hp = character.hp.saturating_sub(attack);
 
         thread::sleep(Duration::from_secs(3));
