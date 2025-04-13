@@ -12,18 +12,18 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Stats {
-    min_attack: i32,
-    max_attack: i32,
-    min_recovery: i32,
-    max_recovery: i32,
+    min_attack: u32,
+    max_attack: u32,
+    min_recovery: u32,
+    max_recovery: u32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Character {
     name: String,
     lv: u32,
-    hp: i32,
-    max_hp: i32,
+    hp: u32,
+    max_hp: u32,
     stats: Stats,
     exp: u32,
 }
@@ -31,10 +31,10 @@ struct Character {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Monster {
     name: String,
-    hp: i32,
-    max_hp: i32,
-    min_attack: i32,
-    max_attack: i32,
+    hp: u32,
+    max_hp: u32,
+    min_attack: u32,
+    max_attack: u32,
     exp: u32,
 }
 
@@ -74,11 +74,11 @@ fn load_or_create_character() -> io::Result<Character> {
     }
 }
 
-fn battle(character: &mut Character, monster: &Monster) {
+fn battle(character: &mut Character, monster: &Monster) -> bool {
     let mut rng = rand::thread_rng();
     let mut monster_hp = monster.hp;
 
-    println!("{}が現れた！", monster.name);
+    println!("🦕{}が現れた！", monster.name);
 
     while character.hp > 0 && monster_hp > 0 {
         println!(
@@ -91,36 +91,44 @@ fn battle(character: &mut Character, monster: &Monster) {
             monster.max_hp.to_string().red()
         );
 
+        thread::sleep(Duration::from_secs(1));
+
         let attack = rng.gen_range(character.stats.min_attack..=character.stats.max_attack);
         println!("{}の攻撃！ {}のダメージ", character.name, attack);
-        monster_hp -= attack;
+        monster_hp = monster_hp.saturating_sub(attack);
 
-        if monster_hp <= 0 {
-            let victory_message = format!("{}を倒した！", monster.name);
-            println!("{}", victory_message.yellow());
-            let get_exp_message = format!("{}の経験値を獲得した！", monster.exp);
+        println!("monster hp: {}", monster_hp);
+
+        thread::sleep(Duration::from_secs(3));
+
+        if monster_hp == 0 {
+            println!("{}", format!("{}を倒した！", monster.name).yellow());
+            println!("{}", format!("{}の経験値を得た！💪", monster.exp).blue());
+
             character.exp += monster.exp;
-            println!("{}", get_exp_message.blue());
-            break;
+            check_level_up(character);
+
+            character.hp = character.max_hp;
+            save_character(character).expect("セーブ中にエラーが発生しました。");
+
+            return true;
         }
 
         let attack = rng.gen_range(monster.min_attack..=monster.max_attack);
         println!("{}の攻撃！ {}のダメージ", monster.name, attack);
-        character.hp -= attack;
+        character.hp = character.hp.saturating_sub(attack);
 
-        if character.hp <= 0 {
-            let lose_message = format!("{}を倒れた...", character.name);
-            println!("{}", lose_message.red());
-            break;
+        thread::sleep(Duration::from_secs(3));
+
+        if character.hp == 0 {
+            println!("{}", format!("{}は倒れた...🚑", character.name).red());
+            return false;
         }
 
         thread::sleep(Duration::from_secs(3));
     }
 
-    if character.hp > 0 {
-        character.hp = character.max_hp;
-        save_character(character).expect("セーブ中にエラーが発生しました。");
-    }
+    false // false for default
 }
 
 fn save_character(character: &Character) -> io::Result<()> {
@@ -141,24 +149,24 @@ fn check_level_up(character: &mut Character) {
     while character.exp >= required_exp_to_level_up(character.lv) {
         character.exp -= required_exp_to_level_up(character.lv);
         character.lv += 1;
-        println!("レベルアップ！ {}レベルになりました！", character.lv);
+        println!("😊レベルアップ！ {}レベルになりました！", character.lv);
 
         let mut rng = rand::thread_rng();
         let hp_increase = rng.gen_range(5..=10);
         character.max_hp += hp_increase;
         character.hp = character.max_hp;
-        println!("HPが{}増加しました！", hp_increase);
+        println!("🙌HPが{}増加しました！", hp_increase);
 
         let attack_increase = rng.gen_range(1..=3);
         character.stats.min_attack += attack_increase;
         character.stats.max_attack += attack_increase;
-        println!("攻撃力が{}増加しました！", attack_increase);
+        println!("⚔️攻撃力が{}増加しました！", attack_increase);
 
         let recovery_increase = rng.gen_range(1..=3);
 
         character.stats.min_recovery += recovery_increase;
         character.stats.max_recovery += recovery_increase;
-        println!("回復力が{}増加しました！", recovery_increase);
+        println!("🛡️回復力が{}増加しました！", recovery_increase);
     }
 }
 
@@ -222,15 +230,14 @@ fn main() {
 
     let weighted_monsters: Vec<Monster> = choose_monsters(&monsters);
 
-    // look weight monsters
-    for monster in &weighted_monsters {
-        println!("モンスター: {} HP: {}", monster.name, monster.hp);
+    for monster in weighted_monsters.iter() {
+        let win = battle(&mut character, monster);
+        if !win {
+            println!("ゲームオーバー⚰️");
+            break;
+        } else {
+            println!("ダンジョンを探索中🧭");
+            thread::sleep(Duration::from_secs(10));
+        }
     }
-
-    // for _ in 0..10 {
-    //     let monster = weighted_monsters
-    //         .choose(&mut rng)
-    //         .expect("モンスターが見つかりませんでした。");
-    //     battle(&mut character, monster);
-    // }
 }
