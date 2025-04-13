@@ -7,7 +7,7 @@ use std::{
 };
 
 use colored::Colorize;
-use rand::{seq::SliceRandom, Rng};
+use rand::{seq::SliceRandom, thread_rng, Rng};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -181,42 +181,51 @@ fn load_monsters() -> io::Result<Vec<Monster>> {
     }
 }
 
+fn choose_monsters(monsters: &[Monster]) -> Vec<Monster> {
+    let high = vec!["ゴブリン", "オオカミ", "スライム", "コウモリ", "ゾンビ"];
+    let mid = vec!["スケルトン", "オーク", "ハーピー"];
+    let low = vec!["ミノタウロス", "トロール"];
+    let rare = vec!["ドラゴン"];
+
+    let mut encounter_pool: Vec<&str> = vec![];
+
+    for name in &high {
+        encounter_pool.extend(std::iter::repeat(name).take(5));
+    }
+    for name in &mid {
+        encounter_pool.extend(std::iter::repeat(name).take(3));
+    }
+    for name in &low {
+        encounter_pool.extend(std::iter::repeat(name).take(2));
+    }
+    for name in &rare {
+        encounter_pool.extend(std::iter::repeat(name).take(1));
+    }
+
+    let mut rng = thread_rng();
+    let mut selected = vec![];
+
+    for _ in 0..10 {
+        let name = encounter_pool.choose(&mut rng).unwrap();
+        if let Some(monster) = monsters.iter().find(|m| &m.name == *name) {
+            selected.push(monster.clone());
+        }
+    }
+
+    selected
+}
+
 fn main() {
     let mut character = load_or_create_character().expect("キャラクターの読み込みに失敗しました。");
 
     let monsters = load_monsters().expect("モンスターの読み込みに失敗しました");
 
-    // let mut weighted_monsters = Vec::new();
-    // for monster in &monsters {
-    //     match monster.name.as_str() {
-    //         "スライム" | "ゴブリン" | "オオカミ" | "コウモリ" | "ゾンビ" => {
-    //             for _ in 0..5 {
-    //                 weighted_monsters.push(monster);
-    //             }
-    //         }
-    //         "スケルトン" | "オーク" | "ハーピー" => {
-    //             for _ in 0..3 {
-    //                 weighted_monsters.push(monster);
-    //             }
-    //         }
-    //         "ミノタウロス" | "トロール" => {
-    //             for _ in 0..2 {
-    //                 weighted_monsters.push(monster);
-    //             }
-    //         }
-    //         "ドラゴン" => {
-    //             weighted_monsters.push(monster);
-    //         }
-    //         _ => {}
-    //     }
-    // }
+    let weighted_monsters: Vec<Monster> = choose_monsters(&monsters);
 
-    println!("モンスターのリスト:");
-    for monster in &monsters {
-        println!(" - {}", monster.name);
+    // look weight monsters
+    for monster in &weighted_monsters {
+        println!("モンスター: {} HP: {}", monster.name, monster.hp);
     }
-
-    // let mut rng = rand::thread_rng();
 
     // for _ in 0..10 {
     //     let monster = weighted_monsters
