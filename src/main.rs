@@ -7,7 +7,7 @@ use std::{
 };
 
 use colored::Colorize;
-use rand::Rng;
+use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,7 +28,7 @@ struct Character {
     exp: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Monster {
     name: String,
     hp: i32,
@@ -162,17 +162,66 @@ fn check_level_up(character: &mut Character) {
     }
 }
 
+fn load_monsters() -> io::Result<Vec<Monster>> {
+    let path = Path::new("monsters.yaml");
+
+    println!("モンスターのデータを読み込み中...");
+
+    if path.exists() {
+        let mut file = File::open(path)?;
+        let mut data = String::new();
+        file.read_to_string(&mut data)?;
+        let monsters: Vec<Monster> = serde_yaml::from_str(&data).unwrap();
+        Ok(monsters)
+    } else {
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "モンスターデータが見つかりません。",
+        ))
+    }
+}
+
 fn main() {
     let mut character = load_or_create_character().expect("キャラクターの読み込みに失敗しました。");
 
-    let monster = Monster {
-        name: String::from("スライム"),
-        hp: 30,
-        max_hp: 30,
-        min_attack: 1,
-        max_attack: 3,
-        exp: 10,
-    };
+    let monsters = load_monsters().expect("モンスターの読み込みに失敗しました");
 
-    battle(&mut character, &monster);
+    // let mut weighted_monsters = Vec::new();
+    // for monster in &monsters {
+    //     match monster.name.as_str() {
+    //         "スライム" | "ゴブリン" | "オオカミ" | "コウモリ" | "ゾンビ" => {
+    //             for _ in 0..5 {
+    //                 weighted_monsters.push(monster);
+    //             }
+    //         }
+    //         "スケルトン" | "オーク" | "ハーピー" => {
+    //             for _ in 0..3 {
+    //                 weighted_monsters.push(monster);
+    //             }
+    //         }
+    //         "ミノタウロス" | "トロール" => {
+    //             for _ in 0..2 {
+    //                 weighted_monsters.push(monster);
+    //             }
+    //         }
+    //         "ドラゴン" => {
+    //             weighted_monsters.push(monster);
+    //         }
+    //         _ => {}
+    //     }
+    // }
+
+    println!("モンスターのリスト:");
+    for monster in &monsters {
+        println!(" - {}", monster.name);
+    }
+
+    // let mut rng = rand::thread_rng();
+
+    // for _ in 0..10 {
+    //     let monster = weighted_monsters
+    //         .choose(&mut rng)
+    //         .expect("モンスターが見つかりませんでした。");
+    //     battle(&mut character, monster);
+    // }
 }

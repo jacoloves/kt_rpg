@@ -1,0 +1,76 @@
+- name: "スライム"
+  hp: 30
+  max_hp: 30
+  min_attack: 1
+  max_attack: 3
+  exp: 10
+
+- name: "ゴブリン"
+  hp: 40
+  max_hp: 40
+  min_attack: 2
+  max_attack: 4
+  exp: 15
+
+- name: "オオカミ"
+  hp: 35
+  max_hp: 35
+  min_attack: 3
+  max_attack: 5
+  exp: 20
+
+- name: "コウモリ"
+  hp: 25
+  max_hp: 25
+  min_attack: 1
+  max_attack: 2
+  exp: 8
+
+- name: "ゾンビ"
+  hp: 45
+  max_hp: 45
+  min_attack: 2
+  max_attack: 4
+  exp: 18
+
+- name: "スケルトン"
+  hp: 50
+  max_hp: 50
+  min_attack: 3
+  max_attack: 5
+  exp: 22
+
+- name: "オーク"
+  hp: 60
+  max_hp: 60
+  min_attack: 4
+  max_attack: 6
+  exp: 25
+
+- name: "トロール"
+  hp: 70
+  max_hp: 70
+  min_attack: 5
+  max_attack: 7
+  exp: 30
+
+- name: "ドラゴン"
+  hp: 80
+  max_hp: 80
+  min_attack: 6
+  max_attack: 8
+  exp: 35
+
+- name: "ミノタウロス"
+  hp: 65
+  max_hp: 65
+  min_attack: 4
+  max_attack: 6
+  exp: 28
+
+- name: "ハーピー"
+  hp: 55
+  max_hp: 55
+  min_attack: 3
+  max_attack: 5
+  exp: 24
