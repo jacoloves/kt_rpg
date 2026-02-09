@@ -1,23 +1,13 @@
+# ステージ1: 草原（Lv1解放）
+# 弱い魔物が住む平和な草原
 - name: "スライム"
   hp: 30
   max_hp: 30
   min_attack: 1
   max_attack: 3
   exp: 10
-
-- name: "ゴブリン"
-  hp: 40
-  max_hp: 40
-  min_attack: 2
-  max_attack: 4
-  exp: 15
-
-- name: "オオカミ"
-  hp: 35
-  max_hp: 35
-  min_attack: 3
-  max_attack: 5
-  exp: 20
+  stage: 1
+  is_boss: false
 
 - name: "コウモリ"
   hp: 25
@@ -25,48 +15,46 @@
   min_attack: 1
   max_attack: 2
   exp: 8
+  stage: 1
+  is_boss: false
 
-- name: "ゾンビ"
-  hp: 45
-  max_hp: 45
+- name: "ゴブリン"
+  hp: 40
+  max_hp: 40
   min_attack: 2
   max_attack: 4
-  exp: 18
+  exp: 15
+  stage: 1
+  is_boss: false
 
-- name: "スケルトン"
-  hp: 50
-  max_hp: 50
+- name: "大イモムシ"
+  hp: 35
+  max_hp: 35
+  min_attack: 2
+  max_attack: 3
+  exp: 12
+  stage: 1
+  is_boss: false
+
+- name: "草原ゴーレム"
+  hp: 100
+  max_hp: 100
+  min_attack: 3
+  max_attack: 6
+  exp: 50
+  stage: 1
+  is_boss: true
+
+# ステージ2: 森（Lv8解放）
+# 野生の獣や妖精が住む森
+- name: "オオカミ"
+  hp: 35
+  max_hp: 35
   min_attack: 3
   max_attack: 5
-  exp: 22
-
-- name: "オーク"
-  hp: 60
-  max_hp: 60
-  min_attack: 4
-  max_attack: 6
-  exp: 25
-
-- name: "トロール"
-  hp: 70
-  max_hp: 70
-  min_attack: 5
-  max_attack: 7
-  exp: 30
-
-- name: "ドラゴン"
-  hp: 80
-  max_hp: 80
-  min_attack: 6
-  max_attack: 8
-  exp: 35
-
-- name: "ミノタウロス"
-  hp: 65
-  max_hp: 65
-  min_attack: 4
-  max_attack: 6
-  exp: 28
+  exp: 20
+  stage: 2
+  is_boss: false
 
 - name: "ハーピー"
   hp: 55
@@ -74,3 +62,209 @@
   min_attack: 3
   max_attack: 5
   exp: 24
+  stage: 2
+  is_boss: false
+
+- name: "オーク"
+  hp: 60
+  max_hp: 60
+  min_attack: 4
+  max_attack: 6
+  exp: 25
+  stage: 2
+  is_boss: false
+
+- name: "人喰い花"
+  hp: 50
+  max_hp: 50
+  min_attack: 3
+  max_attack: 5
+  exp: 22
+  stage: 2
+  is_boss: false
+
+- name: "ダークエルフ"
+  hp: 65
+  max_hp: 65
+  min_attack: 4
+  max_attack: 6
+  exp: 28
+  stage: 2
+  is_boss: false
+
+- name: "森の番人"
+  hp: 180
+  max_hp: 180
+  min_attack: 5
+  max_attack: 8
+  exp: 100
+  stage: 2
+  is_boss: true
+
+# ステージ3: 洞窟（Lv15解放）
+# アンデッドや闇の生物が住む
+- name: "ゾンビ"
+  hp: 45
+  max_hp: 45
+  min_attack: 2
+  max_attack: 4
+  exp: 18
+  stage: 3
+  is_boss: false
+
+- name: "スケルトン"
+  hp: 50
+  max_hp: 50
+  min_attack: 3
+  max_attack: 5
+  exp: 22
+  stage: 3
+  is_boss: false
+
+- name: "洞窟コウモリ"
+  hp: 55
+  max_hp: 55
+  min_attack: 3
+  max_attack: 6
+  exp: 26
+  stage: 3
+  is_boss: false
+
+- name: "リビングアーマー"
+  hp: 80
+  max_hp: 80
+  min_attack: 5
+  max_attack: 7
+  exp: 35
+  stage: 3
+  is_boss: false
+
+- name: "デスナイト"
+  hp: 90
+  max_hp: 90
+  min_attack: 5
+  max_attack: 8
+  exp: 40
+  stage: 3
+  is_boss: false
+
+- name: "骸骨王"
+  hp: 280
+  max_hp: 280
+  min_attack: 7
+  max_attack: 12
+  exp: 180
+  stage: 3
+  is_boss: true
+
+# ステージ4: 山（Lv25解放）
+# 強力な魔物が生息する山岳地帯
+- name: "トロール"
+  hp: 70
+  max_hp: 70
+  min_attack: 5
+  max_attack: 7
+  exp: 30
+  stage: 4
+  is_boss: false
+
+- name: "ミノタウロス"
+  hp: 65
+  max_hp: 65
+  min_attack: 4
+  max_attack: 6
+  exp: 28
+  stage: 4
+  is_boss: false
+
+- name: "ワイバーン"
+  hp: 100
+  max_hp: 100
+  min_attack: 6
+  max_attack: 9
+  exp: 50
+  stage: 4
+  is_boss: false
+
+- name: "ゴーレム"
+  hp: 120
+  max_hp: 120
+  min_attack: 7
+  max_attack: 10
+  exp: 60
+  stage: 4
+  is_boss: false
+
+- name: "グリフォン"
+  hp: 110
+  max_hp: 110
+  min_attack: 6
+  max_attack: 9
+  exp: 55
+  stage: 4
+  is_boss: false
+
+- name: "炎の巨人"
+  hp: 400
+  max_hp: 400
+  min_attack: 10
+  max_attack: 16
+  exp: 300
+  stage: 4
+  is_boss: true
+
+# ステージ5: 城（Lv40解放）
+# 魔王の城、最強の敵が待ち受ける
+- name: "ドラゴン"
+  hp: 150
+  max_hp: 150
+  min_attack: 8
+  max_attack: 12
+  exp: 80
+  stage: 5
+  is_boss: false
+
+- name: "ダークドラゴン"
+  hp: 200
+  max_hp: 200
+  min_attack: 10
+  max_attack: 14
+  exp: 100
+  stage: 5
+  is_boss: false
+
+- name: "キメラ"
+  hp: 180
+  max_hp: 180
+  min_attack: 9
+  max_attack: 13
+  exp: 90
+  stage: 5
+  is_boss: false
+
+- name: "デーモン"
+  hp: 220
+  max_hp: 220
+  min_attack: 11
+  max_attack: 15
+  exp: 120
+  stage: 5
+  is_boss: false
+
+- name: "堕天使"
+  hp: 250
+  max_hp: 250
+  min_attack: 12
+  max_attack: 16
+  exp: 140
+  stage: 5
+  is_boss: false
+
+- name: "魔王"
+  hp: 600
+  max_hp: 600
+  min_attack: 15
+  max_attack: 25
+  exp: 500
+  stage: 5
+  is_boss: true
